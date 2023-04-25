@@ -1,0 +1,25 @@
+name: Build
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+      - run: yarn install --immutable --immutable-cache --check-cache
+      - id: test
+        run: yarn test
+      - uses: barecheck/code-coverage-action@v1
+        with:
+          #barecheck-github-app-token: ${{ secrets.BARECHECK_GITHUB_APP_TOKEN }}
+          lcov-file: "./coverage/lcov.info"
+          send-summary-comment: true
+          show-annotations: "warning"
+          minimum-ratio: 80
